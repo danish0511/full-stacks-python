@@ -1,23 +1,46 @@
+import asyncio
 import reflex as rx
+from .. import navigation
 from ..ui.base import base_page
 
 class ContactState(rx.State):
     form_data: dict = {}
     did_submit: bool = False
+    timeleft: int = 5
+    
+    @rx.var
+    def timeleft_label(self):
+        if self.timeleft < 1:
+            return "No time left"
+        return f"{self.timeleft} seconds"
     
     @rx.var
     def thank_you(self):
         first_name = self.form_data.get("first_name") or ""
         return f"Thank You {first_name}".strip() + "!"
     
-    def handle_submit(self, form_data: dict):
+    async def handle_submit(self, form_data: dict):
         """Handle the form submit."""
         print(form_data)
         self.form_data = form_data
         self.did_submit = True
+        yield
         # sleep
-        # self.did_submit = False
-    
+        await asyncio.sleep(2)
+        self.did_submit = False
+        yield
+        
+    async def start_timer(self):
+        while self.timeleft > 0:
+            await asyncio.sleep(1)
+            self.timeleft -= 1
+            yield
+
+@rx.page(
+    on_load=ContactState.start_timer,
+    route = navigation.routes.CONTACT_US_ROUTE
+)
+
 
 def contact_page() -> rx.Component:
     my_form = rx.form(
@@ -58,6 +81,7 @@ def contact_page() -> rx.Component:
     
     my_child=rx.vstack(
             rx.heading("Contact Us", size="9"),
+            rx.text(ContactState.timeleft_label),
             rx.cond(ContactState.did_submit, ContactState.thank_you, ""),
             rx.desktop_only(
                 rx.box(
