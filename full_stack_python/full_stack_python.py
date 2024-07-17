@@ -43,5 +43,6 @@ app.add_page(contact.contact_page, route=navigation.routes.CONTACT_US_ROUTE)
 app.add_page(contact.contact_entries_list_page, route=navigation.routes.CONTACT_ENTRIES_ROUTE, on_load=contact.ContactState.list_entries)
 app.add_page(blog.blog_post_list_page, route=navigation.routes.BLOG_POSTS_ROUTE, on_load=blog.BlogPostState.load_posts)
 app.add_page(blog.blog_post_add_page, route=navigation.routes.BLOG_POST_ADD_ROUTE)
+app.add_page(blog.blog_post_detail_page, route="/blog/[blog_id]", on_load=blog.BlogPostState.get_post_detail)
 
 
