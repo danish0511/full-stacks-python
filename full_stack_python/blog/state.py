@@ -7,6 +7,7 @@ from .model import BlogPostModel
 class BlogPostState(rx.State):
     posts: List['BlogPostModel'] = []
     post: Optional['BlogPostModel'] = None
+    post_content: str = ""
     
     @rx.var
     def blog_post_id(self):
@@ -23,6 +24,7 @@ class BlogPostState(rx.State):
                 )
             ).one_or_none()
             self.post = result
+            self.post_content = result.content
     
     def load_posts(self):
         with rx.session() as session:
@@ -41,12 +43,21 @@ class BlogPostState(rx.State):
             # print("added", post)
             self.post = post
     
-    # def get_post(self):
-    #     with rx.session() as session:
-    #         result = session.exec(
-    #             select(BlogPostModel)
-    #         )
-    #         self.posts = result
+    def save_post_edits(self,post_id: int, updated_data: dict):
+        with rx.session() as session:
+            post = session.exec(
+                select(BlogPostModel).where(
+                    BlogPostModel.id == post_id
+                )
+            ).one_or_none()
+            if post is None:
+                return 
+            for key, value in updated_data.items():
+                setattr(post, key, value)
+            session.add(post)
+            session.commit()
+            session.refresh(post)
+
 
 class BlogAddPostFormState(BlogPostState):
     form_data: dict = {}
@@ -54,4 +65,14 @@ class BlogAddPostFormState(BlogPostState):
     def handle_submit(self, form_data):
         self.form_data = form_data
         self.add_post(form_data)
+        
+class BlogEditFormState(BlogPostState):
+    form_data: dict = {}
+    # post_content: str = ""
+    
+    def handle_submit(self, form_data):
+        self.form_data = form_data
+        post_id = form_data.pop('post_id')
+        updated_data = {**form_data}
+        self.save_post_edits(post_id, updated_data)
         
