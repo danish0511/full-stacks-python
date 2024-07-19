@@ -5,7 +5,7 @@ import reflex_local_auth
 from rxconfig import config
 
 from .ui.base import base_page
-from . import pages, navigation, contact, blog
+from . import auth, pages, navigation, contact, blog
 
 
 class State(rx.State):
@@ -43,19 +43,24 @@ app.add_page(index)
 
 # Auth pages
 app.add_page(
-    reflex_local_auth.pages.login_page,
+    auth.pages.my_login_page,
     route=reflex_local_auth.routes.LOGIN_ROUTE,
     title="Login",
 )
 app.add_page(
-    reflex_local_auth.pages.register_page,
+    auth.pages.my_register_page,
     route=reflex_local_auth.routes.REGISTER_ROUTE,
     title="Register",
 )
 
 # Other pages
 app.add_page(pages.about_page, route=navigation.routes.ABOUT_US_ROUTE)
-app.add_page(pages.pricing_page, route=navigation.routes.PRICING_ROUTE)
+app.add_page(pages.protected_page, route=navigation.routes.ABOUT_US_ROUTE)
+app.add_page(
+    pages.protected_page,
+    route="/protected/",
+    on_load=auth.SessionState.on_load
+)
 app.add_page(contact.contact_page, route=navigation.routes.CONTACT_US_ROUTE)
 app.add_page(
     contact.contact_entries_list_page,
