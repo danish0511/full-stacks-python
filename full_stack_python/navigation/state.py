@@ -1,4 +1,5 @@
 import reflex as rx
+import reflex_local_auth
 from . import routes
 
 class NavState(rx.State):
@@ -23,3 +24,9 @@ class NavState(rx.State):
     
     def to_contact(self):
         return rx.redirect(routes.CONTACT_US_ROUTE)
+    
+    def to_register(self):
+        return rx.redirect(reflex_local_auth.routes.REGISTER_ROUTE)
+    
+    def to_login(self):
+        return rx.redirect(reflex_local_auth.routes.LOGIN_ROUTE)
