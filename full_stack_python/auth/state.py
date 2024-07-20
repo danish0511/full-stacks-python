@@ -54,7 +54,6 @@ class SessionState(reflex_local_auth.LocalAuthState):
         return rx.redirect("/")
 
 
-
 class MyRegisterState(reflex_local_auth.RegistrationState):
     def handle_registration(
         self, form_data

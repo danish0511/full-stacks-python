@@ -1,6 +1,33 @@
 import reflex as rx
 from reflex.style import toggle_color_mode
-from ..import navigation
+from .. import navigation
+
+def sidebar_logout_item() -> rx.Component:
+    return rx.box(
+        rx.hstack(
+            rx.icon("log-out"),
+            rx.text("Logout", size="4"),
+            width="100%",
+            padding_x="0.5rem",
+            padding_y="0.75rem",
+            align="center",
+            style={
+                "_hover": {
+                    "cursor": "pointer",
+                    "bg": rx.color("accent", 4),
+                    "color": rx.color("accent", 11),
+                },
+                "color": rx.color("accent", 11),
+                "border-radius": "0.5em",
+            },
+        ),
+        on_click=navigation.NavState.to_logout,
+        as_="button",
+        underline="none",
+        weight="medium",
+        width="100%",
+    )
+
 
 def sidebar_dark_mode_toggle_item() -> rx.Component:
     return rx.box(
@@ -14,7 +41,7 @@ def sidebar_dark_mode_toggle_item() -> rx.Component:
                     light="Turn Dark Mode On",
                     dark="Turn Light Mode On",
                 ),
-                size="4"
+                size="4",
             ),
             width="100%",
             padding_x="0.5rem",
@@ -38,9 +65,7 @@ def sidebar_dark_mode_toggle_item() -> rx.Component:
     )
 
 
-def sidebar_item(
-    text: str, icon: str, href: str
-) -> rx.Component:
+def sidebar_item(text: str, icon: str, href: str) -> rx.Component:
     return rx.link(
         rx.hstack(
             rx.icon(icon),
@@ -68,8 +93,9 @@ def sidebar_items() -> rx.Component:
     return rx.vstack(
         sidebar_item("Dashboard", "layout-dashboard", navigation.routes.HOME_ROUTE),
         sidebar_item("Blog", "square-library", navigation.routes.BLOG_POSTS_ROUTE),
-        sidebar_item("Create Post", "square-library", navigation.routes.BLOG_POST_ADD_ROUTE),
-        
+        sidebar_item(
+            "Create Post", "square-library", navigation.routes.BLOG_POST_ADD_ROUTE
+        ),
         width="100%",
     )
 
@@ -85,9 +111,7 @@ def sidebar() -> rx.Component:
                         height="auto",
                         border_radius="25%",
                     ),
-                    rx.heading(
-                        "Reflex", size="7", weight="bold"
-                    ),
+                    rx.heading("Reflex", size="7", weight="bold"),
                     align="center",
                     justify="start",
                     padding_x="0.5rem",
@@ -98,9 +122,7 @@ def sidebar() -> rx.Component:
                 rx.vstack(
                     rx.vstack(
                         sidebar_dark_mode_toggle_item(),
-                        sidebar_item(
-                            "Log out", "log-out", "/#"
-                        ),
+                        sidebar_logout_item(),
                         spacing="1",
                         width="100%",
                     ),
@@ -154,33 +176,21 @@ def sidebar() -> rx.Component:
         ),
         rx.mobile_and_tablet(
             rx.drawer.root(
-                rx.drawer.trigger(
-                    rx.icon("align-justify", size=30)
-                ),
+                rx.drawer.trigger(rx.icon("align-justify", size=30)),
                 rx.drawer.overlay(z_index="5"),
                 rx.drawer.portal(
                     rx.drawer.content(
                         rx.vstack(
                             rx.box(
-                                rx.drawer.close(
-                                    rx.icon("x", size=30)
-                                ),
+                                rx.drawer.close(rx.icon("x", size=30)),
                                 width="100%",
                             ),
                             sidebar_items(),
                             rx.spacer(),
                             rx.vstack(
                                 rx.vstack(
-                                    sidebar_item(
-                                        "Settings",
-                                        "settings",
-                                        "/#",
-                                    ),
-                                    sidebar_item(
-                                        "Log out",
-                                        "log-out",
-                                        "/#",
-                                    ),
+                                    sidebar_dark_mode_toggle_item(),
+                                    sidebar_logout_item(),
                                     width="100%",
                                     spacing="1",
                                 ),
