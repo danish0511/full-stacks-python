@@ -3,8 +3,9 @@ import reflex as rx
 from typing import List
 from sqlmodel import select
 from .model import ContactEntryModel
+from ..auth.state import SessionState
 
-class ContactState(rx.State):
+class ContactState(SessionState):
     form_data: dict = {}
     entries: List['ContactEntryModel'] = []
     did_submit: bool = False
@@ -23,6 +24,9 @@ class ContactState(rx.State):
             if v == "" or v is None:
                 continue
             data[k] = v
+        if self.my_user_id is not None:
+            data['user_id'] = self.my_user_id
+        print("Contact Data", data)
         with rx.session() as session:
             db_entry = ContactEntryModel(
                 **data

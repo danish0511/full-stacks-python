@@ -6,6 +6,6 @@ PRICING_ROUTE="/pricing"
 BLOG_POSTS_ROUTE="/blog"
 BLOG_POST_ADD_ROUTE="/blog/add"
 LOGOUT_ROUTE="/logout"
-
+ARTICLE_LIST_ROUTE="/articles"
 
 

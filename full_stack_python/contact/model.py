@@ -8,8 +8,8 @@ from .. import utils
 class ContactEntryModel(rx.Model, table=True):
     user_id: int | None = None
     first_name: str
-    last_name: str = Field(nullable=True)
-    email: str = Field(nullable=True)
+    last_name: str | None = None
+    email: str | None = None
     message: str
     created_at: datetime = Field(
         default_factory=utils.timing.get_utc_now,
