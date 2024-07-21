@@ -38,7 +38,7 @@ class SessionState(reflex_local_auth.LocalAuthState):
             if result is None:
                 return None
             # database lookup
-            result.user
+            # result.user
             # user_obj = result.user
             # print(result.user)
             return result
