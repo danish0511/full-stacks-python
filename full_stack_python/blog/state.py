@@ -1,8 +1,9 @@
 import reflex as rx
+import sqlalchemy
 from typing import Optional, List
 from sqlmodel import select
 from datetime import datetime
-from ..models import BlogPostModel
+from ..models import BlogPostModel, UserInfo
 from .. import navigation
 from ..auth.state import SessionState
 
@@ -34,17 +35,23 @@ class BlogPostState(SessionState):
     
     
     def get_post_detail(self):
+        if self.my_userinfo_id is None:
+            self.post = None
+            self.post_content = ""
+            self.post_publish_active = False
+            return
+        lookups = (
+            (BlogPostModel.userinfo_id == self.my_userinfo_id) &
+            (BlogPostModel.id == self.blog_post_id)
+        )
         with rx.session() as session:
             if self.blog_post_id == "":
                 self.post = None
                 return
-            result = session.exec(
-                select(BlogPostModel).where(
-                    (BlogPostModel.id == self.blog_post_id)
-                )
-            ).one_or_none()
-            if result.userinfo:
-                print("Working")
+            sql_statement = select(BlogPostModel).options(sqlalchemy.orm.joinedload(BlogPostModel.userinfo).joinedload(UserInfo.user)).where(lookups)
+            result = session.exec(sql_statement).one_or_none()
+            # if result.userinfo:
+            #     print("Working")
                 # result.userinfo.user
             self.post = result
             if result is None:
@@ -53,17 +60,16 @@ class BlogPostState(SessionState):
             self.post_content = self.post.content
             self.post_publish_active = self.post.publish_active
     
-    def load_posts(self, published_only = True):
-        lookup_args = ()
-        if published_only:
-            lookup_args = (
-                (BlogPostModel.publish_active == True) & 
-                (BlogPostModel.publish_date < datetime.now())
-            )
+    def load_posts(self, *args, **kwargs):
+        # if published_only:
+        #     lookup_args = (
+        #         (BlogPostModel.publish_active == True) & 
+        #         (BlogPostModel.publish_date < datetime.now())
+        #     )
         with rx.session() as session:
             result = session.exec(
-                select(BlogPostModel).where(
-                    *lookup_args
+                select(BlogPostModel).options(sqlalchemy.orm.joinedload(BlogPostModel.userinfo)).where(
+                    BlogPostModel.userinfo_id == self.my_userinfo_id
                 )
             ).all()
             self.posts = result

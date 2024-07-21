@@ -5,20 +5,30 @@ from . import state
 def blog_post_detail_page() -> rx.Component:
     can_edit = True
     edit_link = rx.link("Edit", href=f"{state.BlogPostState.blog_post_edit_url}")
-    edit_link_el = rx.cond(can_edit, edit_link, rx.fragment(''))
-    my_child=rx.vstack(
+    edit_link_el = rx.cond(can_edit, edit_link, rx.fragment(""))
+    my_child = rx.cond(
+        state.BlogPostState.post,
+        rx.vstack(
             rx.hstack(
                 rx.heading(state.BlogPostState.post.title, size="9"),
                 edit_link_el,
-                align='end'
+                align="end",
             ),
             rx.text("User Info Id: ", state.BlogPostState.post.userinfo_id),
             rx.text("User Info: ", state.BlogPostState.post.userinfo.to_string()),
             rx.text("User: ", state.BlogPostState.post.userinfo.user.to_string()),
             rx.text(state.BlogPostState.post.publish_date),
-            rx.text(state.BlogPostState.post.content, white_space='pre-wrap'),
+            rx.text(state.BlogPostState.post.content, white_space="pre-wrap"),
             spacing="5",
             align="center",
-            min_height="85vh"
-        )
+            min_height="85vh",
+        ),
+        rx.hstack(
+            rx.heading("Blog Post Not Found"),
+            spacing="5",
+            align="center",
+            justify="center",
+            min_height="85vh",
+        ),
+    )
     return base_page(my_child)

@@ -15,6 +15,7 @@ def blog_post_detail_link(child: rx.Component, post: BlogPostModel):
     post_detail_url = f"{root_path}/{post_id}"
     return rx.link(
         child,
+        rx.heading("By: ", post.userinfo.email),
         href=post_detail_url
     )
 
