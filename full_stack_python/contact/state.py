@@ -2,7 +2,7 @@ import asyncio
 import reflex as rx
 from typing import List
 from sqlmodel import select
-from .model import ContactEntryModel
+from ..models import ContactEntryModel
 from ..auth.state import SessionState
 
 class ContactState(SessionState):

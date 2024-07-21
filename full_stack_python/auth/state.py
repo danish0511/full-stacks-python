@@ -3,7 +3,7 @@ import reflex_local_auth
 
 import sqlmodel
 
-from .models import UserInfo
+from ..models import UserInfo
 
 
 class SessionState(reflex_local_auth.LocalAuthState):
@@ -38,7 +38,7 @@ class SessionState(reflex_local_auth.LocalAuthState):
             if result is None:
                 return None
             # database lookup
-            # result.user
+            result.user
             # user_obj = result.user
             # print(result.user)
             return result
