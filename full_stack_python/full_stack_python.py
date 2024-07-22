@@ -11,8 +11,11 @@ from .auth.pages import (
     my_logout_page
 )
 from .auth.state import SessionState
-from . import auth, pages, navigation, contact, blog
+from . import pages, navigation, contact, blog
 
+from .articles.list import article_public_list_page
+from .articles.state import ArticlePublicState
+from .articles.detail import article_detail_page
 
 class State(rx.State):
     """The app state."""
@@ -98,4 +101,16 @@ app.add_page(
     blog.blog_post_edit_page,
     route="/blog/[blog_id]/edit",
     on_load=blog.BlogPostState.get_post_detail,
+)
+
+app.add_page(
+    article_public_list_page,
+    route=navigation.routes.ARTICLE_LIST_ROUTE,
+    on_load=ArticlePublicState.load_posts,
+)
+
+app.add_page(
+    article_detail_page,
+    route=f"{navigation.routes.ARTICLE_LIST_ROUTE}/[post_id]",
+    on_load=ArticlePublicState.get_post_detail,
 )
