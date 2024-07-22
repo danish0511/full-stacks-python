@@ -4,9 +4,10 @@ from .. import navigation
 
 def landing_component() -> rx.Component:
     return rx.vstack(
+        # rx.theme_panel(default_open=True),
         rx.heading("Welcome to BlogPost", size="9"),
         rx.link(
-            rx.button("About Us"),
+            rx.button("About Us",color_scheme='gray'),
             href=navigation.routes.ABOUT_US_ROUTE,
         ),
         rx.divider(),

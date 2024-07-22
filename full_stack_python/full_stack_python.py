@@ -27,7 +27,14 @@ def index() -> rx.Component:
     )
 
 
-app = rx.App()
+app = rx.App(
+    theme=rx.theme(
+        appearance="dark",
+        has_background=True,
+        radius="large",
+        accent_color="blue"
+    )
+)
 app.add_page(index, on_load=ArticlePublicState.load_posts)
 
 # Auth pages
