@@ -13,45 +13,22 @@ from .auth.pages import (
 from .auth.state import SessionState
 from . import pages, navigation, contact, blog
 
-from .articles.list import article_public_list_page
+from .articles.list import article_public_list_page, article_public_list_component
 from .articles.state import ArticlePublicState
 from .articles.detail import article_detail_page
 
-class State(rx.State):
-    """The app state."""
-
-    label = "Welome to Reflex!"
-
-    def handle_title_input_change(self, val):
-        self.label = val
-
-    def did_change(self):
-        print("Hello World!")
-
-
 def index() -> rx.Component:
-    # Welcome Page (Index)
-    my_user_obj = SessionState.authenticated_user_info
-    my_child = rx.vstack(
-        rx.heading(State.label, size="9"),
-        rx.text(my_user_obj.to_string()),
-        rx.text(my_user_obj.user.username.to_string()),
-        rx.text(
-            "Get started by editing ",
-            rx.code(f"{config.app_name}/{config.app_name}.py"),
-            size="5",
-        ),
-        spacing="5",
-        justify="center",
-        align="center",
-        min_height="85vh",
-        id="my-child",
+    return base_page(
+        rx.cond(
+            SessionState.is_authenticated,
+            pages.dashboard_component(),
+            pages.landing_component()
+        )
     )
-    return base_page(my_child)
 
 
 app = rx.App()
-app.add_page(index)
+app.add_page(index, on_load=ArticlePublicState.load_posts)
 
 # Auth pages
 app.add_page(
@@ -74,7 +51,7 @@ app.add_page(
 
 # Other pages
 app.add_page(pages.about_page, route=navigation.routes.ABOUT_US_ROUTE)
-app.add_page(pages.protected_page, route=navigation.routes.ABOUT_US_ROUTE)
+app.add_page(pages.pricing_page, route=navigation.routes.PRICING_ROUTE)
 app.add_page(
     pages.protected_page,
     route="/protected/",
